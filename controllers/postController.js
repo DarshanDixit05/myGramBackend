@@ -160,3 +160,59 @@ export const addComment = async(req, res) =>{
         })
     }
 }
+
+export const removeComment = async(req, res) =>{
+    const {id} = req.user;
+    const {postId, commentId} = req.params;
+    try {
+        const post = await Post.findById(postId);
+        const user = await User.findById(id);
+
+        if(!user){
+            return res.status(401).json({
+                success:false,
+                message:"No user found"
+            })
+        }
+
+        if(!post){
+            return res.status(401).json({
+                success:false,
+                message:"No post found"
+            })
+        }
+
+        if((post.comments.some((ele)=>{
+            return (ele._id.toString() === commentId)
+        }) === false) && (user.post_commented.some((ele)=>{
+            return ele._id.toString() === postId})===false)){
+            return res.status(401).json({
+                success:false,
+                message:"No such comment exists"
+            })
+        }
+
+        post.comments = post.comments.filter((ele)=>{
+            return ele._id.toString() !== commentId
+        })
+        await post.save();
+
+        user.post_commented = user.post_commented.filter((ele)=>{
+            console.log(ele._id.toString()+" "+postId);
+            return ele.id!==postId
+        })
+        await user.save();
+
+        return res.status(200).json({
+            success:true,
+            message:"Comment removed",
+            data:post
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+}
