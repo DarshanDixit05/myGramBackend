@@ -19,9 +19,7 @@ export const createUser = async(req,res)=>{
         })
     }
     else{
-        const id = new ObjectId()
         const user=await User.create({
-            id,
             username,
             email,
             password
@@ -50,18 +48,37 @@ export const checkExistingUser = async(req, res) =>{
         if(!user){
             return res.status(401).json({message:"Invalid User"});
         }
-        if(user.password!==password){
-            return res.status(400).json({message:"Invalid email/password!"});
-        }
+        const valid = await user.isValidatedPassword(password, user.password);
+        if (!valid) return res.status(401).json({
+            success: false,
+            message: "Invalid email or password"
+        })
+        const token = await user.getJwtToken();
+        return res.status(200).json({
+            success:true,
+            message:"Logged In Successfully!",
+            data:user,token
+        });
     }else{
         const user = await User.findOne({username:inputData});
         if(!user)
         {
             return res.status(401).json({message:"Invalid User"});
         }
-        if(user.password!==password){
-            return res.status(400).json({message:"Invalid username/password!"});
-        }
+        const valid = await user.isValidatedPassword(password, user.password);
+        if (!valid) return res.status(401).json({
+            success: false,
+            message: "Invalid email or password"
+        })
+        const token = await user.getJwtToken();
+        return res.status(200).json({
+            success:true,
+            message:"Logged In Successfully!",
+            data:user,token
+        });
     }
-    return res.status(200).json({message:"Logged In Successfully!"});
+}
+
+export const updateProfile = async(req, res) =>{
+    
 }
