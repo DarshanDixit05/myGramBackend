@@ -80,5 +80,32 @@ export const checkExistingUser = async(req, res) =>{
 }
 
 export const updateProfile = async(req, res) =>{
-    
+    const {id} = req.user;
+    const {username, bio} = req.body;
+    try {
+        const user = await User.findById(id);
+        if(!user){
+            return res.status(401).json({
+                success:false,
+                message:"No user exists"
+            })
+        }
+        const obj = {
+            username,
+            bio
+        }
+        Object.assign(user, obj);
+        await user.save();
+        return res.status(200).json({
+            success:true,
+            message:"Profile updated",
+            data:user
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
 }

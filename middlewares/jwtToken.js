@@ -13,7 +13,7 @@ export const jwtToken = async(req,res,next) =>{
         })
     }
 
-    const decodedToken = jwt.verify(toke, process.env.JWT_SECRET);
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
     if(!decodedToken){
         return res.status(401).json({

@@ -54,6 +54,9 @@ const userSchema=new mongoose.Schema({
     bio:{
         type:String,
     },
+    profileImage:{
+        type:String,
+    },
     followers:[
         {
             user_id:{
