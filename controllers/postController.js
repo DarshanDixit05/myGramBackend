@@ -12,6 +12,10 @@ export const createPost = async(req, res) =>{
             image:formData.image
         })
 
+        const user = await User.findById(id);
+        user.post_uploaded.push(post._id.toString());
+        user.save();
+
         return res.status(200).json({
             success:true,
             message:"Post created successfully",
@@ -93,13 +97,59 @@ export const removeLike = async(req,res) =>{
             return ele.id!==id
         });
         await post.save();
-        
+
         user.post_liked = user.post_liked.filter((ele)=>ele.id!==postId);
         await user.save();
 
         return res.status(200).json({
             success:true,
             message:"Unliked the user",
+            data:post
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+}
+
+export const addComment = async(req, res) =>{
+    const {id} = req.user;
+    const {postId} = req.params;
+    const {comment} = req.body;
+
+    try {
+        const user = await User.findById(id);
+        const post = await Post.findById(postId);
+
+        if(!user){
+            return res.status(401).json({
+                success:false,
+                message:"No user found"
+            })
+        }
+
+        if(!post){
+            return res.status(401).json({
+                success:false,
+                message:"No post found"
+            })
+        }
+
+        const obj = {
+            user_id:id.toString(),
+            comment:comment
+        }
+        post.comments.push(obj);
+        await post.save();
+        user.post_commented.push(postId.toString());
+        await user.save();
+
+        return res.status(200).json({
+            success:true,
+            message:"Comment added",
             data:post
         })
     } catch (error) {
