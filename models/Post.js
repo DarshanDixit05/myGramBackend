@@ -1,35 +1,18 @@
 import mongoose from 'mongoose';
 
 const postSchema = new mongoose.Schema({
-    id: {
-        type: String,
-        required: true,
+    image:{
+        type:String,
     },
     caption: {
         type: String,
-    },
-    location: {
-        type: {
-            type: String,
-            enum: ['Point'],
-            required: true,
-        },
-        coordinates: {
-            type: [Number],
-            required: true,
-        },
     },
     user_id: {
         type: String,
         ref: 'User',
         required: true,
     },
-    hashtags: [
-        {
-            type: String,
-        },
-    ],
-    timestamp: {
+    createdAt: {
         type: Date,
         default: Date.now,
     },
@@ -52,6 +35,9 @@ const postSchema = new mongoose.Schema({
             },
         },
     ],
+},
+{
+    timestamps:true
 });
 
 const Post = mongoose.model('Post', postSchema);

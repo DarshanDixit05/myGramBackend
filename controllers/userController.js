@@ -1,6 +1,5 @@
 // Import Model
 import User from "../models/User.js"
-import {ObjectId} from 'mongodb'
 
 export const createUser = async(req,res)=>{
     const {username,email,password}=req.body;
