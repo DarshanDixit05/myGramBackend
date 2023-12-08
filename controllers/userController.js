@@ -108,3 +108,37 @@ export const updateProfile = async(req, res) =>{
         })
     }
 }
+
+export const followUser = async(req, res) =>{
+    const {id} = req.user;
+    const {peerId} = req.body;
+
+    try {
+        const user = await User.findById(id);
+
+        if(user.followings.some((ele)=> ele.user_id === peerId)){
+            return res.status(401).json({
+                success:false,
+                message:"User already in your following list"
+            })
+        }
+
+        const obj = {
+            user_id:peerId;
+        }
+
+        user.followings.push(obj);
+        user.save();
+        return res.status(200).json({
+            success:true,
+            message:"Followed user successfully",
+            data:user
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+}
