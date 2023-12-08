@@ -111,10 +111,16 @@ export const updateProfile = async(req, res) =>{
 
 export const followUser = async(req, res) =>{
     const {id} = req.user;
-    const {peerId} = req.body;
-
+    const {peerId} = req.params;
     try {
         const user = await User.findById(id);
+        const peer = await User.findById(peerId);
+        if(!peer){
+            return res.status(401).json({
+                success:false,
+                message:"No user found"
+            })
+        }
 
         if(user.followings.some((ele)=> ele.user_id === peerId)){
             return res.status(401).json({
@@ -123,15 +129,68 @@ export const followUser = async(req, res) =>{
             })
         }
 
-        const obj = {
-            user_id:peerId;
+        const userObj = {
+            user_id:peerId
         }
 
-        user.followings.push(obj);
+        user.followings.push(userObj);
         user.save();
+
+        const peerObj = {
+            user_id:id
+        }
+
+        peer.followers.push(peerObj);
+        peer.save();
         return res.status(200).json({
             success:true,
             message:"Followed user successfully",
+            data:user
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+}
+
+export const unfollowUser = async(req,res) =>{
+    const {id} = req.user;
+    const {peerId} = req.params;
+
+    try {
+        const user = await User.findById(id);
+        const peer = await User.findById(peerId);
+
+        if(!peer){
+            return res.status(401).json({
+                success:false,
+                message:"User not found"
+            })
+        }
+
+        if(user.followings.some((ele)=> ele.user_id === peerId)===false){
+            return res.status(401).json({
+                success:false,
+                message:"User is not in your following list"
+            })
+        }
+
+        user.followings = user.followings.filter((ele)=>{
+            return ele.user_id !== peerId
+        })
+        user.save();
+        
+        peer.followers = peer.followers.filter((ele)=>{
+            return ele.user_id !== id;
+        })
+        peer.save();
+
+        return res.status(200).json({
+            success:true,
+            message:"Unfollowed successfully",
             data:user
         })
     } catch (error) {
