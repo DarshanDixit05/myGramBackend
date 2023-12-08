@@ -198,7 +198,6 @@ export const removeComment = async(req, res) =>{
         await post.save();
 
         user.post_commented = user.post_commented.filter((ele)=>{
-            console.log(ele._id.toString()+" "+postId);
             return ele.id!==postId
         })
         await user.save();
@@ -207,6 +206,32 @@ export const removeComment = async(req, res) =>{
             success:true,
             message:"Comment removed",
             data:post
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+}
+
+export const getPosts = async(req, res) =>{
+    const {id} = req.user;
+    console.log(id);
+    try {
+        const user = await User.findById(id);
+        const followersList = user.followings;
+        let posts=[];
+        for(let i=0; i<followersList.length; i++)
+        {
+            const obj = await Post.find({user_id:followersList[i]});
+            if(obj)posts.push(obj);
+        }
+        return res.status(200).json({
+            success:true,
+            message:"Posts fetched",
+            data:posts
         })
     } catch (error) {
         console.log(error);
