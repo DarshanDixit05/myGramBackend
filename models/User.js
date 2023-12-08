@@ -61,12 +61,24 @@ const userSchema=new mongoose.Schema({
         {
             user_id:{
                 type:String,
+            },
+            username:{
+                type:String,
+            },
+            profileImage:{
+                type:String,
             }
         }
     ],
     followings:[
         {
             user_id:{
+                type:String,
+            },
+            username:{
+                type:String,
+            },
+            profileImage:{
                 type:String,
             }
         }
