@@ -28,6 +28,10 @@ const userSchema=new mongoose.Schema({
             post_id:{
                 type:String,
                 ref:'Post'
+            },
+            image:{
+                type:String,
+                ref:'Post'
             }
         }
     ],
@@ -36,12 +40,20 @@ const userSchema=new mongoose.Schema({
             post_id:{
                 type:String,
                 ref:'Post'
+            },
+            image:{
+                type:String,
+                ref:'Post'
             }
         }
     ],
     post_commented:[
         {
             post_id:{
+                type:String,
+                ref:'Post'
+            },
+            image:{
                 type:String,
                 ref:'Post'
             }
