@@ -144,6 +144,38 @@ export const forgotPassword = async(req, res) =>{
     }
 }
 
+export const resetPassword = async(req, res) =>{
+    const {token} = req.params;
+    const {newPassword} = req.body;
+    try {
+        const user = await User.findOne({forgotPasswordToken:token, forgotPasswordExpiry:{
+            $gt:new Date()
+        }})
+        if(!user){
+            return res.status(401).json({
+                success:false,
+                message:"User not found"
+            })
+        }
+        user.password = newPassword;
+        user.forgotPasswordToken=null;
+        user.forgotPasswordExpiry=null;
+
+        user.save();
+        return res.status(200).json({
+            success:true,
+            message:"Password updated successfully",
+            data:user
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+}
+
 export const followUser = async(req, res) =>{
     const {id} = req.user;
     const {peerId} = req.params;
