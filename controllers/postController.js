@@ -241,3 +241,35 @@ export const getPosts = async(req, res) =>{
         })
     }
 }
+
+export const getPostById = async(req, res) =>{
+    const {postId} = req.params;
+    try {
+        const post = await Post.findById(postId);
+        if(!post){
+            return res.status(401).json({
+                success:false,
+                message:"No post found"
+            })
+        }
+        
+        const postLikes = post.likes.length;
+        const postComments = post.comments.length;
+
+        return res.status(200).json({
+            success:true,
+            message:"Fetched post successfully",
+            data:{
+                post:post,
+                likes:postLikes,
+                comments:postComments
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+}
