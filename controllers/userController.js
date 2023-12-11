@@ -110,10 +110,14 @@ export const updateProfile = async(req, res) =>{
 }
 
 export const forgotPassword = async(req, res) =>{
-    const {id} = req.user;
-
+    const {inputData} = req.body;
     try {
-        const user = await User.findById(id);
+        let user;
+        if(inputData.substr(inputData.length-4)===".com"){
+            user = await User.findOne({email:inputData});
+        }else{
+            user = await User.findOne({username:inputData});
+        }
         if(!user)
         {
             return res.status(401).json({
