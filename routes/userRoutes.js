@@ -8,7 +8,7 @@ router.route("/login").post(checkExistingUser);
 router.route("/updateProfile").put(jwtToken, updateProfile);
 router.route("/followUser/:peerId").post(jwtToken, followUser);
 router.route("/unfollowUser/:peerId").post(jwtToken, unfollowUser);
-router.route("/forgotPassword").post(jwtToken, forgotPassword);
-router.route("/resetPassword/:token").post(jwtToken, resetPassword);
+router.route("/forgotPassword").post(forgotPassword);
+router.route("/resetPassword/:token").post(resetPassword);
 
 export default router;

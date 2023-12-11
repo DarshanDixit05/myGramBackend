@@ -151,6 +151,7 @@ export const forgotPassword = async(req, res) =>{
 export const resetPassword = async(req, res) =>{
     const {token} = req.params;
     const {newPassword} = req.body;
+    console.log(token+" "+newPassword);
     try {
         const user = await User.findOne({forgotPasswordToken:token, forgotPasswordExpiry:{
             $gt:new Date()
