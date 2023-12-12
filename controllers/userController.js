@@ -273,3 +273,22 @@ export const unfollowUser = async(req,res) =>{
         })
     }
 }
+
+export const searchUser = async(req, res) =>{
+    const {name} = req.query;
+    try {
+        const users = await User.find({ username: { $regex: new RegExp(`.*${name}.*`, 'i') } });
+        
+        return res.status(200).json({
+            success:true,
+            message:"Succesfully searched",
+            data:users
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
+    }
+}
