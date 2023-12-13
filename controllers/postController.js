@@ -222,12 +222,15 @@ export const getPosts = async(req, res) =>{
     try {
         const user = await User.findById(id);
         const followersList = user.followings;
+
         let posts=[];
+
         for(let i=0; i<followersList.length; i++)
         {
-            const obj = await Post.find({user_id:followersList[i]});
-            if(obj)posts.push(obj);
+            const obj = await Post.find({user_id:followersList[i].user_id});
+            if(obj.length>0)posts.push(obj);
         }
+
         return res.status(200).json({
             success:true,
             message:"Posts fetched",
