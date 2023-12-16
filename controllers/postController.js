@@ -4,15 +4,16 @@ import User from "../models/User.js";
 export const createPost = async(req, res) =>{
     const {id} = req.user;
     const {formData} = req.body;
-
     try {
+        const user = await User.findById(id);
         const post = await Post.create({
             caption:formData.caption,
-            user_id:id,
-            image:formData.image
+            userId:id,
+            username:user.username,
+            profileImage:user.profileImage,
+            image:formData.imageUrl
         })
 
-        const user = await User.findById(id);
         user.post_uploaded.push(post._id.toString());
         user.save();
 
@@ -218,7 +219,6 @@ export const removeComment = async(req, res) =>{
 
 export const getPosts = async(req, res) =>{
     const {id} = req.user;
-    console.log(id);
     try {
         const user = await User.findById(id);
         const followersList = user.followings;
@@ -229,6 +229,16 @@ export const getPosts = async(req, res) =>{
         {
             const obj = await Post.find({user_id:followersList[i].user_id});
             if(obj.length>0)posts.push(obj);
+        }
+
+        if(posts.length===0)
+        {
+            const userPosts = await Post.find({user_id:id});
+            return res.status(200).json({
+                success:true,
+                message:"User posts fetched",
+                data:userPosts
+            })
         }
 
         return res.status(200).json({

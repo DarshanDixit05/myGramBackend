@@ -7,10 +7,17 @@ const postSchema = new mongoose.Schema({
     caption: {
         type: String,
     },
-    user_id: {
+    userId: {
         type: String,
         ref: 'User',
         required: true,
+    },
+    username:{
+        type:String,
+        ref: 'User',
+    },
+    profileImage:{
+        type:String,
     },
     createdAt: {
         type: Date,
